@@ -33,6 +33,14 @@ func main() {
 
 		fmt.Println("连接建立成功！")
 
+		go handleFunc(conn)
+	}
+}
+
+//需要将conn传递过来，每一个新连接，conn是不同的
+func handleFunc(conn net.Conn) {
+	//保证每个连接可以多次接收客户端请求
+	for {
 		//4.创建一个容器，用于接收读取到的数据
 		buf := make([]byte, 1024)
 
@@ -56,8 +64,4 @@ func main() {
 		}
 		fmt.Println("Client <==== Server，长度：", cnt, "，数据：", upperData)
 	}
-}
-
-func connection() {
-
 }
