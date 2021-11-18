@@ -324,3 +324,113 @@ My way to learn Golang
 
 ### 3.http client
 
+```go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"net/http"
+)
+
+func main() {
+	//1.设置请求URL
+	client := http.Client{}
+	resp, err := client.Get("https://www.baidu.com")
+	if err != nil {
+		fmt.Println("clent.Get err:", err)
+		return
+	}
+
+	//2.获取请求头的相关信息
+	//使用beego,gin等web框架，可以使用更加简单的方式获取下面的信息
+	ct := resp.Header.Get("Content-Type")
+	date := resp.Header.Get("Date")
+	server := resp.Header.Get("Server")
+
+	fmt.Println("header : ", resp.Header)
+
+	fmt.Println("content-type:", ct)
+	fmt.Println("Date:", date)
+	fmt.Println("server:", server)
+
+	url := resp.Request.URL
+	code := resp.StatusCode
+	status := resp.Status
+
+	fmt.Println("url:", url)
+	fmt.Println("code:", code)
+	fmt.Println("status:", status)
+
+    
+	body := resp.Body
+	fmt.Println("body 111:", body)
+    //body是接口类型，需要使用下面的方法转换成字节类型
+	//func ReadAll(r io.Reader) ([]byte, error)
+	readBodyStr, err := ioutil.ReadAll(body)
+	if err != nil {
+		fmt.Println("ioutil.ReadAll err:", err)
+		return
+	}
+
+	fmt.Println("body string:", string(readBodyStr))
+}
+```
+
+### 4.http server
+
+```go
+package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	//1.注册路由 router
+	//xxxx/user ===> func1
+	//xxxx/name ===> func2
+	//xxxx/id ===> func3
+
+	//https://127.0.0.1:8080/user，func是回调函数，用于路由的响应，这个回调函数原型是固定的
+	//func HandleFunc(pattern string, handler func(ResponseWriter, *Request))
+	http.HandleFunc("/user", func(writer http.ResponseWriter, request *http.Request) {
+		//request：===> 包含客户端发来的数据
+		fmt.Println("用户请求详情：")
+		fmt.Println("request:", request)
+
+		//这里是具体处理业务逻辑
+
+		//write：===> 通过writer将数据返回给客户端
+		//func WriteString(w Writer, s string) (n int, err error)
+		_, _ = io.WriteString(writer, "这是/user请求返回的数据！")
+	})
+
+	//https://127.0.0.1:8080/name
+	http.HandleFunc("/name", func(writer http.ResponseWriter, request *http.Request) {
+		fmt.Println("用户请求详情：")
+		fmt.Println("request:", request)
+
+		_, _ = io.WriteString(writer, "这是/name请求返回的数据！")
+	})
+
+	//https://127.0.0.1:8080/id
+	http.HandleFunc("/id", func(writer http.ResponseWriter, request *http.Request) {
+		fmt.Println("用户请求详情：")
+		fmt.Println("request:", request)
+
+		_, _ = io.WriteString(writer, "这是/id请求返回的数据！")
+	})
+
+	fmt.Println("Http Server start ...")
+	//func ListenAndServe(addr string, handler Handler) error
+	if err := http.ListenAndServe("127.0.0.1:8080", nil); err != nil {
+		fmt.Println("http.ListenAndServe err:", err)
+		return
+	}
+}
+
+```
+
