@@ -1,5 +1,5 @@
 # GolangNote
-My way to learn Golang
+Go语言学习记录
 
 ## Socket
 
