@@ -434,3 +434,84 @@ func main() {
 
 ```
 
+## 网络聊天室
+
+实现一个网络聊天室
+
+功能分析：
+
+1. 上线下线
+2. 聊天，其他人、自己都可以看到聊天消息
+3. 查询当前聊天室的用户名who
+4. 修改自己名字rename|Duke
+5. 超时踢出
+
+技术点分析：
+
+1. socket tcp编程
+2. map结构
+   1. 存储所有的用户
+   2. map遍历
+   3. map删除
+3. go程、channel
+4. select（超时退出，主动退出）
+5. timer定时器
+
+### 实现基础
+
+1. tcp socket，建立多个连接
+
+   ```go
+   package main
+   
+   import (
+   	"fmt"
+   	"net"
+   )
+   
+   func main() {
+   	listener, err := net.Listen("tcp", ":8080")
+   	if err != nil {
+   		fmt.Println("net.Listen err:", err)
+   		return
+   	}
+   	fmt.Println("服务器启动成功...")
+   
+   	for {
+   		fmt.Println("服务器监听中...")
+   
+   		conn,err := listener.Accept()
+   		if err != nil {
+   			fmt.Println("listener.Accept err:", err)
+   			return
+   		}
+   
+   		fmt.Println("连接建立成功！")
+   
+   		//业务处理
+   		go handler(conn)
+   	}
+   }
+   
+   //业务处理函数
+   func handler(conn net.Conn) {
+   	for {
+   		fmt.Println("业务处理开始...")
+   
+   		buf := make([]byte, 1024)
+   
+   		cnt, err := conn.Read(buf)
+   		if err != nil {
+   			fmt.Println("conn.Read err:", err)
+   			return
+   		}
+   		fmt.Println("接收客户端发送的数据：", string(buf[:cnt-1]),"，数据长度：", cnt-1)
+   	}
+   }
+   
+   ```
+
+   
+
+
+
