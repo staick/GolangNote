@@ -4,9 +4,48 @@
 
 ## 0x00 VSCode开发环境配置
 
+### 1. 安装插件
 
+### 2.设置代理
 
-## 0x01 Socket
+Go1.13版本之后，推荐使用"https://goproxy.cn"代理
+
+```shell
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+```
+
+### 3.安装工具包
+
+在VSCode中使用`Ctrl+Shift+P`
+
+## 0x01 基础语法
+
+### 1.类型
+
+### 2.变量
+
+### 3.函数
+
+### 4.流程控制
+
+### 5.数据结构
+
+#### 1.数组
+
+#### 2.切片
+
+#### 3.映射（集合）
+
+#### 4.结构体
+
+## 0x02 面向对象
+
+## 0x03 错误处理
+
+## 0x04 多线程
+
+## 0x05 Socket
 
 ### 1.Server Demo(单次连接)
 
@@ -252,7 +291,7 @@
    fmt.Println("Client <==== Server cnt:", cnt, ", data:", string(buf[0:cnt]))
    ```
 
-## 0x02 http
+## 0x06 http
 
 ### 1.请求报文格式
 
@@ -439,7 +478,7 @@ func main() {
 
 ```
 
-## 0x03 网络聊天室
+## 0x07 网络聊天室
 
 实现一个网络聊天室
 
@@ -567,7 +606,7 @@ func main() {
 }
 ```
 
-## 0x04 微服务
+## 0x08 微服务
 
 ### 1.特性
 
@@ -641,7 +680,7 @@ RPC：Remote Procedure Call Protocol
    conn.Call("服务名.方法名", 传入参数, 传出参数)
    ```
 
-#### RPC相关函数
+#### 2.RPC相关函数
 
 1. 注册rpc服务
 
@@ -679,4 +718,42 @@ RPC：Remote Procedure Call Protocol
    reply:传出参数。定义var 变量, &变量名 完成传参
    */
    ```
+
+#### 3.编码实现
+
+#### 4. json版rpc
+
+- 使用nc -l 127.0.0.1 8800 充当服务器
+- 02-client.go 充当客户端，发起通信 ---> 乱码
+  - 原因：RPC使用go语言特有的数据序列化gob。其他编程语言不能解析
+- 使用通用的序列化、反序列化 ---- json、protobuf
+  - 修改客户端，使用jsonrpc
+
+    ```go
+    conn, err := jsonrpc.Dial("tcp", "8800")
+    ```
+
+    使用nc -l 127.0.0.1 8800充当服务器
+
+    结果：
+
+    ```json
+    {"method":"hello.HelloWorld","params":["李白"],"id":0}
+    ```
+
+  - 修改服务器，修改绑定服务的部分，使用jsonrpc
+
+    ```go
+    jsonrpc.ServeConn(conn)
+    ```
+
+    受用nc 127.0.0.1充当客户端
+
+    ```shell
+    echo -e '{"method":"hello.HelloWorld","params":["李白"],"id":0}' | nc 127.0.0.1 8800
+    ```
+
+    如果返回值的error不为空，无论传出参数是否有值，服务端都不会返回数据
+
+#### 5.rpc封装
 

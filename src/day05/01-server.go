@@ -17,14 +17,19 @@ func (this *World) HelloWorld (name string, resp *string) error {
 	return nil
 }
 
+
+
 func main() {
 	//1.注册RPC服务，绑定对象
 	// func rpc.RegisterName(name string, rcvr interface{}) error
-	err := rpc.RegisterName("hello", new(World))
-	if err != nil {
-		fmt.Println("注册rpc服务失败！", err)
-		return
-	}
+	// err := rpc.RegisterName("hello", new(World))
+	// if err != nil {
+	// 	fmt.Println("注册rpc服务失败！", err)
+	// 	return
+	// }
+
+	RegisterService(new(World))
+
 	//2.设置监听
 	listener, err := net.Listen("tcp", ":8800")
 	if err != nil {
