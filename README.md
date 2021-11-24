@@ -2,42 +2,432 @@
 
 [TOC]
 
+## 相关网站
+
+Go官网：https://go.dev/
+
+Go中文网：https://studygolang.com/
+
 ## 0x00 VSCode开发环境配置
 
-### 1. 安装插件
+1. 安装插件
 
-### 2.设置代理
+2. 设置代理
 
-Go1.13版本之后，推荐使用"https://goproxy.cn"代理
+   Go1.13版本之后，推荐使用"https://goproxy.cn"代理
 
-```shell
-go env -w GO111MODULE=on
-go env -w GOPROXY=https://goproxy.cn,direct
-```
+	```shell
+	go env -w GO111MODULE=on
+	go env -w GOPROXY=https://goproxy.cn,direct
+	```
 
-### 3.安装工具包
+3. 安装工具包
 
-在VSCode中使用`Ctrl+Shift+P`
+	在VSCode中使用`Ctrl+Shift+P`
 
 ## 0x01 基础语法
 
-### 1.类型
+1. 编译并运行程序
 
-### 2.变量
+   ```shell
+   go run test.go
+   ```
 
-### 3.函数
+2. 构建程序
 
-### 4.流程控制
+   ```shell
+   go build test.go
+   ```
 
-### 5.数据结构
+### 1. 类型
 
-#### 1.数组
+1. go是强类型的语言，在声明变量的时候需要指定变量的类型。
 
-#### 2.切片
+2. 对于bool值，go不允许使用1和0代表true和false
 
-#### 3.映射（集合）
+#### 1.1 类型
 
-#### 4.结构体
+   - 整数
+     - int32
+     - int64
+   - 浮点数
+     - float32
+     - float64，常用
+   - 字符串
+     - string，不能对字符串执行数学运算
+   - 数组
+
+#### 1.2 检查变量类型
+
+ 使用`reflect.TypeOf(变量)`来显示变量的类型
+
+```go
+var i int = 3
+fmt.Println(reflect.TypeOf(i))
+```
+
+#### 1.3 类型转换
+
+- go不支持隐式类型转换
+
+- 可以用类似C语言的强制类型转换
+
+  ```go
+  var f float64 = 1.1
+  fmt.Println(int64(f))
+  ```
+  
+  实测上述方法不支持字符串和布尔类型的转换
+- strconv包提供了一系列类型转换的方法
+
+  ```go
+	var s string = "true"
+	//将s转化为bool类型
+	b, err := strconv.ParseBool(s)
+	```
+	
+
+
+### 2. 变量
+
+#### 2.1 声明变量
+
+1. 变量声明的方式，在函数内使用简短变量声明，再函数外使用省略类型
+
+   ```go
+   var s string = "Hello World"
+   
+   //省略变量类型
+   var s = "Hello World"
+   
+   var t string
+   t = "Hello World"
+   
+   //简短变量声明，常用方式，但是只能再函数内部使用
+   u := "Hello World"
+   ```
+
+2. 快捷生成类型不同的变量
+
+   ```go
+   var (
+       s string = "foo"
+       i int = 4
+   )
+   ```
+
+3. 变量的默认值（零值）
+
+   ```go
+   var i int		//0
+   var f float64	//0
+   var b bool		//false
+   var s string	//""
+   ```
+
+#### 2.2 指针
+
+再变量名前加上&可以获取变量再计算机内存中的地址
+
+   ```go
+   s := "Hello World"
+   fmt.Println(&s)
+   ```
+
+#### 2.3 声明常量
+
+常量是不允许修改的
+
+```go
+const s string = "Hello World"
+```
+
+### 3. 函数
+
+#### 3.1 返回单个值
+
+```go
+func function() bool {
+    
+}
+```
+
+#### 3.2 返回多个值
+
+```go
+func function() (int, string) {
+    
+}
+
+//调用时，可以使用两个变量接收
+a, b := function()
+```
+
+#### 3.3 不定参函数
+
+```go
+//函数中，num是一个包含所有参数的切片
+func function(num...int) int {
+    
+}
+```
+
+#### 3.4 具名返回值
+
+```go
+//使用具名返回值时无需显示的返回相应的变量
+func function() (x, y string) {
+    //只需return即可
+}
+```
+
+#### 3.5 递归函数
+
+```go
+func selfLoop(n int) {
+	if n <= 0 {
+		fmt.Println("循环结束，退出！")
+		return
+	}
+	fmt.Printf("循环第%d\n", 11-n)
+	n -= 1
+	selfLoop(n)
+}
+```
+
+#### 3.6 函数作为值传递
+
+Go将函数是为一种类型，可以将函数赋值给变量，通过变量来调用它
+
+```go
+fn := func() {
+    
+}
+fn()
+```
+
+函数作为传入参数
+
+```go
+//参数中的string为返回值类型
+func function(f func() string) string {
+    
+}
+```
+
+### 4. 流程控制
+
+#### 4.1 选择结构
+
+1. if-else if-else
+
+   ```go
+   if 判断条件 {
+       
+   } else if 判断条件 {
+       
+   } else {
+       
+   }
+   ```
+
+2. switch-case
+
+   ```go
+   switch 变量 {
+   	case 判断:
+       	语句
+   	case 判断:
+       	语句
+       default:
+       	语句
+   } 
+   ```
+
+#### 4.2 循环结构
+
+1. 死循环
+
+   ```go
+   for{
+       
+   }
+   ```
+
+2. 常用循环
+
+   ```go
+   for i:=0;i<10;i++ {
+       
+   }
+   ```
+
+3. for-range循环
+
+   ```go
+   nums := []int{1, 2, 3, 4}
+   for i, n := range nums {
+       
+   }
+   ```
+
+#### 4.3 defer语句
+
+1. defer能够在函数返回前执行另一个函数，常用于执行清理操作或确保操作
+
+	```go
+	func main() {
+    	defer fmt.Println("2")
+    	fmt.Println("1")
+	}
+	```
+
+2. 对于多个defer标记的语句，从后往前执行
+
+### 5. 数据结构
+
+#### 5.1 数组(Array)
+
+声明数组并给它赋值
+
+```go
+var cheese [2]string
+cheese[0] = "1"
+cheese[1] = "2"
+```
+
+#### 5.2 切片(Slice)
+
+切片相对于数组来说可以添加删除元素，还可以复制切片中的元素，感觉类似于动态数组。
+
+1. 定义切片
+
+	```go
+	var cheeses = make([]string, 2)
+	```
+
+2. 添加元素
+
+   ```go
+   //添加一个元素
+   cheeses = append(cheeses, "Camembert")
+   
+   //添加多个元素
+   cheeses = append(cheeses, "Camembert", "Reblochon", "Picodon")
+   ```
+
+3. 删除元素
+
+   ```go
+   //切片没有删除的方法，但是可以使用append()配合切片实现删除
+   //注意调用的其实是如slice = append(slice, anotherSlice...)所示的函数，必须加最后的三个.
+   cheeses = append(cheeses[:2], cheeses[2+1:]...)
+   ```
+
+4. 复制元素
+
+   ```go
+   //使用copy()函数，第一个参数要粘贴的切片，第二个参数是要复制的切片
+   copy(dest, source)
+   ```
+
+#### 5.3 集合(Map)
+
+1. 定义集合
+
+   ```go
+   var players = make(map[string]int)
+   ```
+
+2. 添加/修改元素
+
+   ```go
+   players["cook"] = 30
+   ```
+
+3. 删除元素
+
+   ```go
+   del(players,"cook")
+   ```
+
+#### 5.4 结构体(Structure)
+
+1. 创建结构体
+
+   ```go
+   //声明结构体
+   type Movie struct {
+       Name 	string
+       Rating	float64 
+   }
+   
+   //创建方式一：使用类型的方式
+   var m Movie
+   m.Name = "Metropolis"
+   m.Rating = 0.99
+   
+   //创建方式二：使用new关键字
+   m := new(Movie)
+   m.Name = "Metropolis"
+   m.Rating = 0.99
+   
+   //创建方式三：使用简短变量赋值（常用方式）
+   m := Movie{
+       Name: "Metropolis",
+       Rating: 0.99,
+   }
+   ```
+
+2. 嵌套结构体
+
+   ```go
+   type Superhero struct {
+       Name	string
+       Age		int
+       Address	Address
+   }
+   
+   type Address struct {
+       Number	int
+       Street	string
+       City	string
+   }
+   ```
+
+3. 初始化结构体
+
+   ```go
+   //结构体被创建后，结构体内的属性有默认值，默认值与变量的默认值相同，其他类型的默认值为nil
+   //所以我们最好对结构体进行初始化，最常用的方法就是使用构造函数
+   type Alarm struct {
+       Time	string
+       Sound	string
+   }
+   
+   func NewAlarm(time string) Alarm {
+       a := Alarm{
+           Time:	time,
+           Sound:	"Klaxon",
+       }
+       return a
+   }
+   ```
+
+4. 比较结构体
+
+   ```go
+   //对于相同类型的结构体可以使用相等或不等运算符来进行比较
+   //对于不同类型的运算符不能进行比较
+   //可以使用reflect.TypeOf()查看结构体的类型
+   ```
+
+5. 公有和私有
+
+   对于go语言来说，公有和私有主要的区别在于表示符首字符是否是大写的
+
+   - 标识符首字母大写：公有
+   - 标识符首字母小写：私有
 
 ## 0x02 面向对象
 
@@ -634,7 +1024,7 @@ RPC：Remote Procedure Call Protocol
   - 每个服务都被封装成进程，彼此独立
   - 进程和进程之间，可以使用不同的语言实现
 
-#### 1.RPC入门使用
+#### 2.1 RPC入门使用
 
 ##### 服务端
 
@@ -680,7 +1070,7 @@ RPC：Remote Procedure Call Protocol
    conn.Call("服务名.方法名", 传入参数, 传出参数)
    ```
 
-#### 2.RPC相关函数
+#### 2.2 RPC相关函数
 
 1. 注册rpc服务
 
@@ -719,9 +1109,9 @@ RPC：Remote Procedure Call Protocol
    */
    ```
 
-#### 3.编码实现
+#### 2.3 编码实现
 
-#### 4. json版rpc
+#### 2.4 json版rpc
 
 - 使用nc -l 127.0.0.1 8800 充当服务器
 - 02-client.go 充当客户端，发起通信 ---> 乱码
@@ -755,5 +1145,9 @@ RPC：Remote Procedure Call Protocol
 
     如果返回值的error不为空，无论传出参数是否有值，服务端都不会返回数据
 
-#### 5.rpc封装
+#### 2.5 rpc封装
+
+## 补充
+
+Herman Schaaf基准测试，测试字符串拼接各种方法的性能
 
