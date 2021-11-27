@@ -7,6 +7,5 @@ func main() {
 	fmt.Println(str)
 	str = "world"
 	fmt.Println(str)
-	// str = 42
 	fmt.Println(str)
 }
